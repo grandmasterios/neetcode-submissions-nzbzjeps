@@ -11,29 +11,38 @@ class Solution {
         int m = grid.length;
         int n = grid[0].length;
 
+        // BFS Multi-Source
         Queue<int[]> queue = new LinkedList<>();
-        
+
         for(int i = 0; i < m; i++) {
-            for(int j = 0; j < n; j++) {
-                // Multi-Source
+            for (int j = 0; j < n; j++) {
                 if(grid[i][j] == 0) {
-                    queue.add(new int[]{i, j});
+                    queue.offer(new int[]{i, j, 0});
                 }
             }
         }
 
         while(!queue.isEmpty()) {
-            int[] source = queue.poll();
-            int r = source[0];
-            int c = source[1];
+            int size = queue.size();
+            
+            for(int i = 0; i < size; i++) {
+                int[] curr = queue.poll();
+                int x = curr[0];
+                int y = curr[1];
+                int currDist = curr[2];
 
-            for(int[] dir : directions) {
-                int nr = r + dir[0];
-                int nc = c + dir[1];
+                for(int[] dir : directions) {
+                    int dx = x + dir[0];
+                    int dy = y + dir[1];
+                    int dist = currDist + 1;
 
-                if(nr >= 0 && nr < m && nc >= 0 && nc < n && grid[nr][nc] == 2147483647) {
-                    grid[nr][nc] = grid[r][c] + 1;
-                    queue.add(new int[]{nr, nc});
+                    if(dx < 0 || dy < 0 || dx >= m || dy >= n) continue;
+                    if(grid[dx][dy] == -1 || grid[dx][dy] == 0) continue;
+
+                    if(dist < grid[dx][dy]) {
+                        grid[dx][dy] = dist;
+                        queue.offer(new int[]{dx, dy, dist});
+                    }
                 }
             }
         }
